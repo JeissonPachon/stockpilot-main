@@ -1,0 +1,44 @@
+# ------------------------------------
+# EXCLUSIONES ESENCIALES DEL PROYECTO PHP
+# ------------------------------------
+
+# 1. DEPENDENCIAS (Composer)
+# Excluye la carpeta de las librerías de Composer
+/vendor/
+
+# 2. CACHES, LOGS, SESIONES
+# Excluye cualquier carpeta de cache o logs que genere la aplicación
+/cache/
+/logs/
+
+# 3. SESIONES PHP (Archivos temporales)
+# Excluye cualquier archivo de sesiones si se crean en el disco
+*.session
+
+# 4. ARCHIVOS DE CONFIGURACIÓN LOCAL
+# Si tienes un archivo de conexión a la BD que solo tiene tus credenciales locales,
+# es vital que lo excluyas por seguridad. (Si solo usas 'conexion.php' y no tiene
+# información sensible, puedes omitir estas líneas, pero es buena práctica).
+# Ejemplo:
+# conexion.local.php
+# .env
+
+# 5. ARCHIVOS TEMPORALES Y DEL SISTEMA OPERATIVO
+# Miniaturas de macOS
+.DS_Store
+# Archivos temporales de VS Code
+.vscode/
+
+# 6. ARCHIVOS DE PRUEBA Y BASES DE DATOS
+# Si tienes archivos de bases de datos locales (SQLite, etc.)
+*.sqlite
+*.db
+# ... (Contenido anterior: /vendor/, .DS_Store, etc.)
+
+# ------------------------------------
+# EXCLUSIONES DE IMÁGENES Y ARCHIVOS GENERADOS
+# ------------------------------------
+# Excluye todos los archivos dentro de la carpeta de logos
+/img/logos/*
+# Excluye la base de datos (si la subes solo como archivo de código, no como datos)
+/bd/*

@@ -1,0 +1,436 @@
+/* -------------------------------------------------------------------
+ * ESTILOS DEL MENÚ LATERAL FIJO Y EXPANDIBLE (ADAPTADO A STOCKPILOT)
+ * ------------------------------------------------------------------- */
+
+:root {
+    /* Colores base adaptados a tu azul #3b5998 */
+    --primary-color: 227, 43%, 41%; /* Base del azul #3b5998 */
+    --primary-light: 227, 43%, 55%; /* Azul mas claro para hover */
+    
+    --menu-bg: 216, 32%, 17%; /* Fondo base alineado al slate del sistema */
+    --menu-bg-dark: 218, 35%, 14%;
+    --menu-bg-light: 216, 30%, 24%;
+
+    --white: 0, 0%, 100%;
+    --gray-text: 214, 20%, 78%;
+    
+    /* Tamaños */
+    --navbar-width-collapsed: 2.5em; /* 80px */
+    --navbar-width-expanded: 12em; /* 256px */
+    --transition-main: .175, .685, .32;
+    --paragraph: 0.8rem;
+    --navbar-buttons: 2rem;
+}
+
+/* ==================
+   CLASES FLEXBOX
+   ================== */
+.flexbox {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.flexbox-left {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+}
+/* Importante: para que #navbar funcione como contenedor vertical */
+.flexbox-col {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+
+/* ================== BUSCADOR ================== */
+.navbar-search {
+    flex-shrink: 0;
+    padding: 0.45em 0.7em;
+    position: relative;
+}
+.navbar-search input {
+    width: 100%;
+    padding: 0.45em 2em 0.45em 0.7em;
+    border: none;
+    border-radius: 6px;
+    background: rgba(255,255,255,0.12);
+    color: var(--white);
+    font-size: 0.84rem;
+    outline: none;
+    transition: background 0.3s;
+}
+.navbar-search input::placeholder {
+    color: rgba(255,255,255,0.58);
+}
+.navbar-search input:focus {
+    background: rgba(255,255,255,0.20);
+}
+.search-icon {
+    position: absolute;
+    right: 1.5em;
+    top: 50%;
+    transform: translateY(-50%);
+    color: rgba(255,255,255,0.6);
+    font-size: 0.9rem;
+    pointer-events: none;
+}
+
+/* Ocultar buscador colapsado */
+#navbar:not(:hover) .navbar-search input,
+#navbar:not(:hover) .search-icon {
+    opacity: 0;
+    width: 0;
+    padding: 0;
+    pointer-events: none;
+}
+#navbar:hover .navbar-search input {
+    opacity: 1;
+    width: 100%;
+    padding: 0.45em 2em 0.45em 0.7em;
+}
+
+
+/* ==================
+   NAVBAR PRINCIPAL
+   ================== */
+
+#navbar {
+    top: 0;
+    padding: 0;
+    width: var(--navbar-width-collapsed);
+    height: 100vh;
+    position: fixed;
+    display: flex;
+    flex-direction: column; 
+    
+    background-color: hsl(var(--menu-bg)); 
+    transition: width .35s cubic-bezier(var(--transition-main), 1);
+    
+    overflow: hidden; 
+    z-index: 1000;
+}
+#navbar:hover {
+    width: var(--navbar-width-expanded);
+}
+
+/* Scrollbar del menú - Usando tu color azul principal */
+.scrollable-menu-items::-webkit-scrollbar-track {
+    background-color: hsl(var(--menu-bg));
+}
+.scrollable-menu-items::-webkit-scrollbar {
+    width: 8px;
+    background-color: hsl(var(--menu-bg));
+}
+.scrollable-menu-items::-webkit-scrollbar-thumb {
+    background-color: hsl(var(--primary-color));
+    border-radius: 4px;
+}
+
+/* Contenedor principal de ítems - Debe estar vacío */
+.navbar-items {
+    margin: 0;
+    padding: 0;
+    list-style-type: none;
+}
+
+/* 1. LOGO/HOME (StockPilot) - POSICIÓN FIJA SUPERIOR */
+.navbar-logo {
+    margin: 0; 
+    width: 100%;
+    height: var(--navbar-width-collapsed);
+    background: hsl(var(--menu-bg-dark));
+    flex-shrink: 0; 
+    border-bottom: 1px solid hsla(var(--white), 0.1);
+    /* 🔑 CORRECCIÓN 1: Aplicamos la alineación a la izquierda (flexbox-left) */
+    display: flex; 
+    justify-content: flex-start;
+    align-items: center;
+}
+/* Estilo del contenedor interno para centrar el icono */
+.navbar-logo > .navbar-item-inner {
+    width: 100%; 
+}
+.navbar-logo > .navbar-item-inner:hover {
+    background-color: transparent;
+}
+/* Estilo del icono (FontAwesome) del Logo */
+.navbar-logo > .navbar-item-inner > .navbar-item-inner-icon-wrapper i {
+    font-size: 1em;
+    color: hsl(var(--white));
+}
+
+/* 2. CONTENEDOR DE ÍTEMS DESPLAZABLES (Solución para el scroll) */
+.scrollable-menu-items {
+    flex-grow: 1; 
+    overflow-y: auto; 
+    overflow-x: hidden;
+    padding-top: 0.5em;
+}
+
+/* Oculta la lista principal de páginas al estar colapsado (Comportamiento Hamburguesa Puro) */
+#navbar:not(:hover) .navbar-top-items {
+    display: none;
+}
+
+/* Muestra la lista principal de páginas al expandirse */
+#navbar:hover .navbar-top-items {
+    display: block;
+}
+
+
+/* 3. ÍTEMS INFERIORES (Perfil y Logout) - POSICIÓN FIJA INFERIOR */
+.navbar-bottom-items {
+    margin: 0;
+    padding: 0.5em 0;
+    list-style-type: none;
+    flex-shrink: 0; 
+    border-top: 1px solid hsla(var(--white), 0.1);
+}
+
+/* --- ESTILO GENERAL DE LOS ÍTEMS --- */
+
+.navbar-item {
+    padding: 0 .5em;
+    width: 100%;
+    cursor: pointer;
+}
+.navbar-item-inner {
+    padding: 0.78em 0.45em;
+    width: 100%;
+    position: relative;
+    color: hsl(var(--gray-text));
+    border-radius: 0.55em;
+    border: 1px solid transparent;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 0.62rem;
+    transition: all .2s cubic-bezier(var(--transition-main), 1);
+    font-size: 0.86rem;
+}
+
+/* Efecto hover/activo */
+a.navbar-item-inner:hover, 
+.navbar-item.active .navbar-item-inner {
+    color: hsl(var(--white));
+    background: linear-gradient(90deg, hsla(var(--primary-color), 0.28), hsla(var(--primary-color), 0.1));
+    border-color: hsla(var(--primary-color), 0.45);
+    box-shadow: 0 6px 14px -8px rgba(0, 0, 0, 0.45);
+}
+
+/* Iconos de los ítems (Colapsado: Solo se ve esto) */
+.navbar-item-inner-icon-wrapper {
+    /* Ancho de 80px - 10px de padding horizontal */
+    width: calc(var(--navbar-width-collapsed) - 1em); 
+    position: relative;
+    display: flex; 
+    justify-content: center;
+    align-items: center;
+    /* Asegura el padding correcto para el ícono */
+    padding: 0 0.5em;
+    flex-shrink: 0;
+    transition: width .25s ease, padding .25s ease;
+}
+.navbar-item-inner-icon-wrapper i {
+    font-size: calc(var(--navbar-buttons) - 1.02rem);
+}
+
+/* En expandido, reducimos el bloque de icono para acercarlo al texto */
+#navbar:hover .navbar-item-inner-icon-wrapper {
+    width: 1.2rem;
+    justify-content: flex-start;
+    padding-left: 0.12rem;
+}
+
+/* Texto de los ítems (Expandido: Aparece esto) */
+.link-text {
+    margin: 0;
+    width: 0;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    line-height: 1.2;
+    font-weight: 500;
+    transition: all .35s cubic-bezier(var(--transition-main), 1);
+    overflow: hidden;
+    opacity: 0; /* Oculto inicialmente */
+}
+/* Cuando el menú se expande, muestra el texto */
+#navbar:hover .link-text {
+    width: calc(100% - 2.2rem);
+    opacity: 1;
+}
+
+/* Estilo específico para el ítem de la página actual o principal */
+.navbar-item.active .navbar-item-inner .navbar-item-inner-icon-wrapper i {
+    color: hsl(var(--primary-light)); /* Icono activo en tu azul */
+}
+
+.navbar-item.active .link-text {
+    color: hsl(var(--white));
+}
+
+
+/* ==================================================
+   CONTENIDO PRINCIPAL (Solución al solapamiento)
+   ================================================== */
+#main-content-wrapper {
+    /* Margen fijo para el menú colapsado */
+    margin: 0 0 0 var(--navbar-width-collapsed); 
+    min-height: 100vh;
+    transition: margin-left .35s cubic-bezier(var(--transition-main), 1);
+    padding: 20px; 
+}
+
+/* Mueve el contenido cuando el menú se expande (al hacer hover en #navbar) */
+#navbar:hover ~ #main-content-wrapper {
+    margin-left: var(--navbar-width-expanded);
+}
+
+
+/* ==================================================
+   4. ANULACIÓN DE EFECTOS INTERACTIVOS (INICIO y PERFIL)
+   ================================================== */
+
+/* 1. Anular el HOVER y cursor en el ÍTEM DE INICIO (navbar-logo) */
+.navbar-logo,
+.navbar-logo:hover {
+    background-color: hsl(var(--menu-bg-dark)) !important; /* Mantiene el fondo oscuro fijo */
+    cursor: default !important; /* Asegura que el cursor sea el normal (flecha) */
+}
+/* Aseguramos que el contenido interno del logo no cambie de color al pasar el mouse */
+.navbar-logo > .navbar-item-inner:hover {
+    background-color: transparent !important;
+}
+/* NUEVA REGLA: Forzar estilo de negrilla y blanco para el texto "Inicio" */
+.navbar-logo .link-text {
+    font-weight: bold !important; /* Mantiene la negrilla siempre */
+    color: hsl(var(--white)) !important; /* Fija el color en blanco */
+}
+
+/* 🔑 CORRECCIÓN 2: Aseguramos el padding y alineación del ícono de la casa */
+.navbar-logo .navbar-item-inner-icon-wrapper {
+    /* Quitamos el centrado */
+    justify-content: flex-start !important; 
+    /* Forzamos el padding a la izquierda para separarlo del borde */
+    padding-left: 0.8em !important; 
+    /* El ancho debe ser fijo */
+    width: var(--navbar-width-collapsed); 
+}
+
+
+/* 2. Anular el HOVER y cursor en el ÍTEM DE INFORMACIÓN DE USUARIO (PERFIL) */
+.user-info-display,
+.user-info-display:hover {
+    cursor: default !important; 
+}
+/* Asegurar que el contenedor interno (.navbar-item-inner) tampoco cambie color al pasar el mouse */
+.user-info-display .navbar-item-inner:hover {
+    background-color: transparent !important;
+    color: hsl(var(--white)) !important; 
+}
+
+
+/* ==================
+   MEDIA QUERIES
+   ================== */
+
+@media only screen and (max-width: 756px) {
+    :root {
+        --navbar-width-collapsed: 4em;
+        --navbar-width-expanded: 12em;
+    }
+
+    #navbar {
+        width: var(--navbar-width-collapsed);
+    }
+
+    #navbar:hover {
+        width: var(--navbar-width-collapsed);
+    }
+
+    #navbar.mobile-open {
+        width: var(--navbar-width-expanded);
+        box-shadow: 12px 0 24px rgba(15, 23, 42, 0.35);
+    }
+    
+    #main-content-wrapper {
+        margin-left: var(--navbar-width-collapsed);
+    }
+
+    #navbar:hover ~ #main-content-wrapper {
+        margin-left: var(--navbar-width-collapsed);
+    }
+
+    #navbar.mobile-open ~ #main-content-wrapper {
+        margin-left: var(--navbar-width-collapsed);
+    }
+
+    #navbar .link-text {
+        width: 0 !important;
+        opacity: 0;
+    }
+
+    #navbar.mobile-open .link-text {
+        width: calc(100% - 2.2rem) !important;
+        opacity: 1;
+    }
+
+    #navbar:not(:hover) .navbar-top-items {
+        display: block;
+    }
+
+    .navbar-item-inner {
+        justify-content: center;
+        padding: 0.75em 0.25em;
+    }
+
+    #navbar.mobile-open .navbar-item-inner {
+        justify-content: flex-start;
+        padding: 0.78em 0.45em;
+    }
+
+    .navbar-item-inner-icon-wrapper {
+        width: 100%;
+        justify-content: center;
+        padding: 0;
+    }
+
+    #navbar.mobile-open .navbar-item-inner-icon-wrapper {
+        width: 1.2rem;
+        justify-content: flex-start;
+        padding-left: 0.12rem;
+    }
+
+    .navbar-search {
+        display: none;
+    }
+
+    #navbar.mobile-open .navbar-search {
+        display: block;
+    }
+
+    #navbar .navbar-logo {
+        cursor: pointer;
+    }
+}
+
+@media only screen and (max-width: 480px) {
+    :root {
+        --navbar-width-collapsed: 3.7em;
+        --navbar-width-expanded: 11em;
+    }
+
+    #main-content-wrapper {
+        margin-left: var(--navbar-width-collapsed);
+    }
+}
+
+/* === REGLAS PARA CENTRAR EL LOGO (SOLO LAS QUE FUNCIONAN) === */
+/* 🔑 CORRECCIÓN 3: Eliminamos esta regla conflictiva que forzaba el centrado absoluto. */
+/* .navbar-logo {
+    display: flex;
+    justify-content: center !important; 
+    align-items: center !important; 
+} */
+
