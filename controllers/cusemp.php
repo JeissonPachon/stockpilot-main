@@ -78,6 +78,12 @@ if ($ope == "save") {
         if (isset($_POST['pasusu']) && !empty($_POST['pasusu'])) {
             $hash_pas = generar_hash_contrasena($_POST['pasusu']);
             $musu->setPasusu($hash_pas);
+        } else {
+            // Si no se envió nueva contraseña, conservar la existente en la BD
+            $current = $musu->getOne();
+            if ($current && isset($current['pasusu'])) {
+                $musu->setPasusu($current['pasusu']);
+            }
         }
 
         $musu->edit();
