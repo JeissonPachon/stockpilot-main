@@ -100,8 +100,8 @@
                                     </td>
                                     <td><span class="badge bg-secondary"><?= $row['total_movs']; ?></span></td>
                                     <td>
-                                        <span class="<?= $row['balance'] < 0 ? 'text-danger fw-bold' : 'text-success fw-bold' ?>">
-                                            <?= number_format($row['balance'], 2) ?>
+                                            <span class="<?= $row['balance'] < 0 ? 'text-danger fw-bold' : 'text-success fw-bold' ?>">
+                                            <?= number_format($row['balance'], 2, ',', '.') ?>
                                         </span>
                                     </td>
                                     <td>

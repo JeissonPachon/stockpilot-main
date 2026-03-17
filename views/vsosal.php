@@ -136,7 +136,7 @@ $detallesCount = !empty($detalles) ? count($detalles) : 0;
                 <div class="card-body d-flex flex-wrap align-items-center gap-3">
                     <div class="me-auto">
                         <div class="text-muted small">Resumen de salida</div>
-                        <div class="fw-bold">Items: <?= $detallesCount ?> | Total: $<?= number_format((float)$total_salida, 2) ?></div>
+                        <div class="fw-bold">Items: <?= $detallesCount ?> | Total: $<?= number_format((float)$total_salida, 2, ',', '.') ?></div>
                     </div>
                     <?php if ($detallesCount > 0): ?>
                         <span class="badge bg-success">Lista para confirmar</span>
@@ -215,8 +215,8 @@ $detallesCount = !empty($detalles) ? count($detalles) : 0;
                                             <span class="text-muted">Sin venc.</span>
                                         <?php endif; ?>
                                     </td>
-                                    <td>$<?php echo number_format($d['vundet'], 2); ?></td>
-                                    <td>$<?php echo number_format($d['totdet'], 2); ?></td>
+                                    <td>$<?php echo number_format((float)$d['vundet'], 2, ',', '.'); ?></td>
+                                    <td>$<?php echo number_format((float)$d['totdet'], 2, ',', '.'); ?></td>
                                     <td class="text-center">
                                         <a href="home.php?pg=<?php echo $pg; ?>&idsal=<?php echo $idsal; ?>&delete=<?php echo $d['iddsal']; ?>" class="btn btn-outline-danger btn-sm" onclick="return confirm('¿Eliminar producto?')">
                                             <i class="fas fa-trash"></i>
@@ -235,7 +235,7 @@ $detallesCount = !empty($detalles) ? count($detalles) : 0;
                         <tfoot>
                             <tr class="table-light fw-bold">
                                 <td colspan="6" class="text-end">VALOR TOTAL DE SALIDA (Afectación Kardex):</td>
-                                <td colspan="2" class="text-success" id="total_visible_salida" data-total-base="<?php echo htmlspecialchars((string)$total_salida); ?>">$<?php echo number_format($total_salida, 2); ?></td>
+                                <td colspan="2" class="text-success" id="total_visible_salida" data-total-base="<?php echo htmlspecialchars((string)$total_salida); ?>">$<?php echo number_format((float)$total_salida, 2, ',', '.'); ?></td>
                             </tr>
                         </tfoot>
                     </table>
@@ -246,7 +246,7 @@ $detallesCount = !empty($detalles) ? count($detalles) : 0;
                 <?php if ($detallesCount > 0): ?>
                     <div class="alert alert-success me-auto mb-0 d-flex align-items-center">
                         <i class="fas fa-check-circle me-2"></i>
-                        Listo para confirmar: <?= $detallesCount ?> items. Total: $<?= number_format((float)$total_salida, 2) ?>
+                        Listo para confirmar: <?= $detallesCount ?> items. Total: $<?= number_format((float)$total_salida, 2, ',', '.') ?>
                     </div>
                 <?php else: ?>
                     <div class="alert alert-warning me-auto mb-0 d-flex align-items-center">

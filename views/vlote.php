@@ -125,13 +125,13 @@
                                         <small class="text-muted">N/A</small>
                                     <?php endif; ?>
                                 </td>
-                                <td class="text-center"><?php echo number_format($l['cantini'], 2); ?></td>
+                                <td class="text-center"><?php echo number_format((float)$l['cantini'], 2, ',', '.'); ?></td>
                                 <td class="text-center">
                                     <span class="fw-bold <?php echo $l['cantact'] <= 0 ? 'text-danger' : 'text-success'; ?>">
-                                        <?php echo number_format($l['cantact'], 2); ?>
+                                        <?php echo number_format((float)$l['cantact'], 2, ',', '.'); ?>
                                     </span>
                                 </td>
-                                <td class="text-center">$<?php echo number_format($l['costuni']); ?></td>
+                                <td class="text-center"><?php echo $l['costuni'] !== null ? '$'.number_format((float)$l['costuni'], 2, ',', '.') : '—'; ?></td>
                                 <td class="text-center">
                                     <span class="badge bg-<?php echo $badgeColor; ?>">
                                         <?php echo $l['estado']; ?>

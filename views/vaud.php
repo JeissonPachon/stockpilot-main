@@ -192,7 +192,7 @@ function navegadorCorto($ua) {
 <div class="aud-stats">
     <div class="aud-stat c-primary">
         <div class="s-icon"><i class="fa fa-database"></i></div>
-        <div class="s-num"><?= number_format($sg_total) ?></div>
+        <div class="s-num"><?= number_format($sg_total, 0, ',', '.') ?></div>
         <div class="s-lbl">Total Eventos</div>
     </div>
     <div class="aud-stat c-success">
@@ -432,7 +432,7 @@ function navegadorCorto($ua) {
                         <?php if($datos && isset($mov['tabla']) && $mov['tabla']=='movim'): ?>
                         <strong><?= isset($datos['tipmov']) && $datos['tipmov']==1 ? '↑ Entrada' : '↓ Salida' ?></strong>
                         <?php if(isset($datos['cantmov'])): ?> &bull; Cant: <strong><?= $datos['cantmov'] ?></strong><?php endif; ?>
-                        <?php if(isset($datos['valmov'])): ?> &bull; $<?= number_format($datos['valmov'],2) ?><?php endif; ?>
+                        <?php if(isset($datos['valmov'])): ?> &bull; $<?= number_format($datos['valmov'],2,',','.') ?><?php endif; ?>
                         <?php if(!empty($datos['docref'])): ?> <small class="text-muted"><?= htmlspecialchars($datos['docref']) ?></small><?php endif; ?>
                         <?php elseif(isset($mov['tabla'])): ?>
                             <code><?= htmlspecialchars(ucfirst($mov['tabla'])) ?></code>
@@ -470,7 +470,7 @@ function navegadorCorto($ua) {
                 </div>
             </div>
             <div class="rank-bar-wrap">
-                <div style="font-size:.75rem;text-align:right;font-weight:700;color:#4f46e5;margin-bottom:3px;"><?= number_format($r['total_eventos']) ?></div>
+                <div style="font-size:.75rem;text-align:right;font-weight:700;color:#4f46e5;margin-bottom:3px;"><?= number_format($r['total_eventos'], 0, ',', '.') ?></div>
                 <div class="rank-bar"><div class="rank-bar-fill" style="width:<?= $pct ?>%"></div></div>
             </div>
         </div>

@@ -171,7 +171,7 @@ $productos = $mkard->getProductos();
                                             <?php endif; ?>
                                         </td>
                                         <td class="text-center fw-bold"><?= $mov['cantmov']; ?></td>
-                                        <td class="text-end">$<?= number_format($mov['valmov'], 2); ?></td>
+                                        <td class="text-end">$<?= number_format($mov['valmov'], 2, ',', '.'); ?></td>
                                         <td><small><?= $mov['docref']; ?></small></td>
                                         <td><small class="text-muted"><?= $mov['obs']; ?></small></td>
                                     </tr>
