@@ -5,10 +5,36 @@ include("controllers/cmen.php");
 
 <?php if ($datm && count($datm) > 0) { ?>
 
-<!-- Navbar (Menú Fijo con búsqueda y scroll interno) -->
+<style>
+    #navbar:not(:hover) .navbar-item-inner-icon-wrapper {
+        width: 100% !important;
+        display: flex !important;
+        justify-content: center !important;
+        align-items: center !important;
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+    
+    /* Asegura que el icono dentro del wrapper no tenga desplazamientos */
+    .navbar-item-inner-icon-wrapper i {
+        width: auto !important;
+        margin: 0 !important;
+        text-align: center !important;
+    }
+
+    /* Ajuste para el ítem de usuario en modo colapsado */
+    #navbar:not(:hover) .navbar-info-item {
+        padding: 12px 0 !important;
+        justify-content: center !important;
+    }
+
+    #navbar:not(:hover) .navbar-info-item .user-details-wrapper {
+        display: none !important;
+    }
+</style>
+
 <nav id="navbar">
     
-    <!-- 1. ÍCONO PRINCIPAL (HOME) -->
     <div class="navbar-logo flexbox-left">
         <div class="navbar-item-inner flexbox-left"> 
             <div class="navbar-item-inner-icon-wrapper flexbox-col">
@@ -18,15 +44,12 @@ include("controllers/cmen.php");
         </div>
     </div>
 
-    <!-- 2. BUSCADOR (NUEVO) -->
     <div class="navbar-search">
         <input type="text" id="menu-search" placeholder="Buscar en menú..." autocomplete="off">
         <i class="fa-solid fa-magnifying-glass search-icon"></i>
     </div>
 
-    <!-- 3. CONTENEDOR DE ÍTEMS PRINCIPALES (CON SCROLL) -->
     <div class="scrollable-menu-items" id="scrollable-menu">
-        <!-- LISTA DE ÍTEMS PRINCIPALES -->
         <ul class="navbar-top-items" id="menu-items-list">
             <?php 
             foreach ($datm as $dm) { 
@@ -45,15 +68,19 @@ include("controllers/cmen.php");
         </ul>
     </div>
     
-    <!-- 4. ÍTEMS INFERIORES (PERFIL Y SALIR) -->
     <ul class="navbar-bottom-items"> 
-        <li class="navbar-item flexbox-left <?= ($pg==2000) ? 'active' : ''; ?>">
-            <a class="navbar-item-inner flexbox-left" href="home.php?pg=2000">
-                <div class="navbar-item-inner-icon-wrapper flexbox-col">
-                    <i class="fa-solid fa-user"></i> 
-                </div>
-                <span class="link-text">Mi Perfil</span>
-            </a>
+        <li class="navbar-info-item flexbox-left" style="padding: 12px 16px; display: flex; align-items: center; gap: 10px; color: white; cursor: default;">
+            <div class="navbar-item-inner-icon-wrapper flexbox-col" style="min-width: 30px; text-align: center;">
+                <i class="fa-solid fa-user"></i> 
+            </div>
+            <div class="user-details-wrapper link-text" style="display: flex; flex-direction: column; line-height: 1.2;">
+                <span style="font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 140px; font-size: 0.85rem;">
+                    <?= $_SESSION['nomusu']; ?>
+                </span>
+                <small style="font-size: 0.65rem; opacity: 0.7; text-transform: uppercase;">
+                    <?= $_SESSION['nomper']; ?>
+                </small>
+            </div>
         </li>
         
         <li class="navbar-item flexbox-left">
@@ -67,7 +94,6 @@ include("controllers/cmen.php");
     </ul>
 </nav>
 
-<!-- SCRIPT DE BÚSQUEDA EN TIEMPO REAL -->
 <script>
 document.addEventListener('DOMContentLoaded', function () {
     const searchInput = document.getElementById('menu-search');
@@ -76,7 +102,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
     searchInput.addEventListener('input', function () {
         const query = this.value.trim().toLowerCase();
-
         let visibleCount = 0;
 
         menuItems.forEach(item => {
@@ -89,7 +114,6 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         });
 
-        // Opcional: Mostrar mensaje si no hay resultados
         let noResults = document.getElementById('no-results-msg');
         if (!noResults && query !== '' && visibleCount === 0) {
             noResults = document.createElement('div');
@@ -105,7 +129,6 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 
-    // Limpiar al hacer clic fuera (opcional)
     searchInput.addEventListener('blur', function () {
         if (this.value === '') {
             this.value = '';
