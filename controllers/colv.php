@@ -21,33 +21,46 @@ $recaptcha_token = $_POST['recaptchaResponse'] ?? NULL; // ⬅️ Recibimos el t
 date_default_timezone_set('America/Bogota'); 
 
 if ($emausu) {
-
     // --- ⬇️ INICIO VALIDACIÓN RECAPTCHA V3 ⬇️ ---
-    $url = 'https://www.google.com/recaptcha/api/siteverify';
-    $data = [
+    if (empty($recaptcha_token)) {
+        echo "<script>window.location.href='../index.php?pg=olvido&msg=recaptcha_fail';</script>";
+        exit;
+    }
+
+    $verify_url = 'https://www.google.com/recaptcha/api/siteverify';
+    $post_fields = http_build_query([
         'secret' => RECAPTCHA_SECRET_KEY,
         'response' => $recaptcha_token,
-        'remoteip' => $_SERVER['REMOTE_ADDR']
-    ];
+        'remoteip' => $_SERVER['REMOTE_ADDR'] ?? null
+    ]);
 
-    $options = [
-        'http' => [
-            'header'  => "Content-type: application/x-www-form-urlencoded\r\n",
-            'method'  => 'POST',
-            'content' => http_build_query($data),
-        ],
-        'ssl' => [
-            'verify_peer' => false,
-            'verify_peer_name' => false,
-        ],
-    ];
+    $ch = curl_init($verify_url);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_POST, true);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, $post_fields);
+    curl_setopt($ch, CURLOPT_TIMEOUT, 10);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
 
-    $context  = stream_context_create($options);
-    $response = @file_get_contents($url, false, $context);
+    $response = curl_exec($ch);
+    $curl_err = curl_error($ch);
+    curl_close($ch);
+
+    if ($response === false || empty($response)) {
+        echo "<script>window.location.href='../index.php?pg=olvido&msg=recaptcha_fail';</script>";
+        exit;
+    }
+
     $response_keys = json_decode($response, true);
 
-    if (!$response_keys["success"] || $response_keys["score"] < RECAPTCHA_SCORE_MINIMO) {
-        echo "<script>alert('Error de verificación de seguridad (reCAPTCHA). Intente de nuevo.'); window.location.href='../index.php?pg=olvido';</script>";
+    if (!is_array($response_keys) || empty($response_keys['success'])) {
+        echo "<script>window.location.href='../index.php?pg=olvido&msg=recaptcha_fail';</script>";
+        exit;
+    }
+
+    // Verificar score mínimo (reCAPTCHA v3)
+    $score = isset($response_keys['score']) ? floatval($response_keys['score']) : 0.0;
+    if ($score < RECAPTCHA_SCORE_MINIMO) {
+        echo "<script>window.location.href='../index.php?pg=olvido&msg=recaptcha_fail';</script>";
         exit;
     }
     // --- ⬆️ FIN VALIDACIÓN RECAPTCHA V3 ⬆️ ---

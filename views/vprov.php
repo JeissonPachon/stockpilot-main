@@ -52,6 +52,11 @@
         </select>
     </div>
 
+    <?php // Si el usuario no es Superadmin, forzamos el idemp en un input oculto para evitar inconsistencias ?>
+    <?php if (isset($_SESSION['idper']) && $_SESSION['idper'] != 1) { ?>
+        <input type="hidden" name="idemp" value="<?= isset($_SESSION['idemp']) ? $_SESSION['idemp'] : '';?>">
+    <?php } ?>
+
     <input type="hidden" name="idprov" value="<?php if($datOne && $datOne[0]['idprov']) echo $datOne[0]['idprov']; ?>">
     <input type="hidden" name="ope" value="save">
 
@@ -137,6 +142,15 @@ document.addEventListener("DOMContentLoaded", function() {
             icon: 'warning',
             title: '¡Eliminación exitosa!',
             text: 'El Dominio ha sido eliminado correctamente.',
+            confirmButtonColor: '#dc3545',
+            confirmButtonText: 'Aceptar'
+        });
+    }
+    if (msg === 'err') {
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'Ocurrió un error al guardar o actualizar. Revisa los datos e intenta nuevamente.',
             confirmButtonColor: '#dc3545',
             confirmButtonText: 'Aceptar'
         });

@@ -9,8 +9,52 @@ require_once('conexion.php');
 require_once('../controllers/misfun.php'); 
 require_once('../models/maud.php');
 
+// reCAPTCHA: definir clave secreta si no está definida
+if (!defined('RECAPTCHA_SECRET_KEY')) {
+    define('RECAPTCHA_SECRET_KEY', '6LerVXwsAAAAAO1IVu4NPPU6LkWuc0evHbgnqsbm');
+    define('RECAPTCHA_SCORE_MINIMO', 0.1);
+}
+
 $usu = isset($_POST['usu']) ? $_POST['usu'] : NULL; // Email o usuario
 $pas = isset($_POST['pas']) ? $_POST['pas'] : NULL;
+// token reCAPTCHA enviado desde la vista
+$recaptcha_token = $_POST['recaptchaResponse'] ?? NULL;
+
+// Verificar reCAPTCHA antes de procesar login
+if (empty($recaptcha_token)) {
+    echo '<script>window.location="../index.php?err=recaptcha_fail";</script>';
+    exit;
+}
+
+// Verificación server-side (reCAPTCHA v3)
+$verify_url = 'https://www.google.com/recaptcha/api/siteverify';
+$post_fields = http_build_query([
+    'secret' => RECAPTCHA_SECRET_KEY,
+    'response' => $recaptcha_token,
+    'remoteip' => $_SERVER['REMOTE_ADDR'] ?? null
+]);
+
+$ch = curl_init($verify_url);
+curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+curl_setopt($ch, CURLOPT_POST, true);
+curl_setopt($ch, CURLOPT_POSTFIELDS, $post_fields);
+curl_setopt($ch, CURLOPT_TIMEOUT, 10);
+curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
+
+$response = curl_exec($ch);
+curl_close($ch);
+
+if ($response === false || empty($response)) {
+    echo '<script>window.location="../index.php?err=recaptcha_fail";</script>';
+    exit;
+}
+
+$response_keys = json_decode($response, true);
+$score = isset($response_keys['score']) ? floatval($response_keys['score']) : 0.0;
+if (!is_array($response_keys) || empty($response_keys['success']) || $score < RECAPTCHA_SCORE_MINIMO) {
+    echo '<script>window.location="../index.php?err=recaptcha_fail";</script>';
+    exit;
+}
 
 if ($usu && $pas) {
     // Llamamos directamente a la función de autenticación

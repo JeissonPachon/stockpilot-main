@@ -91,24 +91,34 @@ class Mprov {
 
     // Obtener todos los proveedores con info de ubicación y empresa
     // Obtener todos los proveedores con info de ubicación y empresa
-public function getAll($idemp = null, $idper = null){
+public function getAll($idemp = null, $idper = null, $idusu = null){
     try {
         $sql = "SELECT p.idprov, p.tipoprov, p.nomprov, p.docprov, p.telprov, p.emaprov, p.dirprov, p.fec_crea, p.fec_actu, p.act,
-                       u.nomubi, u.dirubi, u.depubi, u.ciuubi,
-                       e.nomemp, e.telemp, e.emaemp, e.diremp
-                FROM proveedor AS p
-                INNER JOIN ubicacion AS u ON p.idubi = u.idubi
-                INNER JOIN empresa AS e ON p.idemp = e.idemp";
+                   u.nomubi, u.dirubi, u.depubi, u.ciuubi,
+                   e.nomemp, e.telemp, e.emaemp, e.diremp
+            FROM proveedor AS p
+            LEFT JOIN ubicacion AS u ON p.idubi = u.idubi
+            LEFT JOIN empresa AS e ON p.idemp = e.idemp";
 
-        if($idper != 1) { // Si no es SuperAdmin, filtrar por empresa
-            $sql .= " WHERE p.idemp = :idemp";
+        if($idper != 1) { // Si no es SuperAdmin, filtrar por empresa o por empresas vinculadas al usuario
+            if (!empty($idemp)) {
+                $sql .= " WHERE p.idemp = :idemp";
+            } elseif (!empty($idusu)) {
+                $sql .= " WHERE p.idemp IN (SELECT idemp FROM usuario_empresa WHERE idusu = :idusu)";
+            } else {
+                // No tenemos idemp ni idusu: devolver vacío para seguridad
+                return [];
+            }
         }
 
         $modelo = new conexion();
         $conexion = $modelo->get_conexion();
         $result = $conexion->prepare($sql);
 
-        if($idper != 1) $result->bindParam(':idemp', $idemp);
+        if($idper != 1) {
+            if (!empty($idemp)) $result->bindParam(':idemp', $idemp);
+            elseif (!empty($idusu)) $result->bindParam(':idusu', $idusu);
+        }
 
         $result->execute();
         $res = $result->fetchAll(PDO::FETCH_ASSOC);
@@ -119,18 +129,24 @@ public function getAll($idemp = null, $idper = null){
 }
 
 // Obtener un proveedor específico
-public function getOne($idemp = null, $idper = null){
+public function getOne($idemp = null, $idper = null, $idusu = null){
     try {
         $sql = "SELECT p.idprov, p.tipoprov, p.nomprov, p.docprov, p.telprov, p.emaprov, p.dirprov, p.fec_crea, p.fec_actu, p.act,
-                       u.idubi, u.nomubi, u.dirubi, u.depubi, u.ciuubi,
-                       e.idemp, e.nomemp, e.telemp, e.emaemp, e.diremp
-                FROM proveedor AS p
-                INNER JOIN ubicacion AS u ON p.idubi = u.idubi
-                INNER JOIN empresa AS e ON p.idemp = e.idemp
-                WHERE p.idprov = :idprov";
+                   u.idubi, u.nomubi, u.dirubi, u.depubi, u.ciuubi,
+                   e.idemp, e.nomemp, e.telemp, e.emaemp, e.diremp
+            FROM proveedor AS p
+            LEFT JOIN ubicacion AS u ON p.idubi = u.idubi
+            LEFT JOIN empresa AS e ON p.idemp = e.idemp
+            WHERE p.idprov = :idprov";
 
-        if($idper != 1) { // Si no es SuperAdmin, agregar filtro de empresa
-            $sql .= " AND p.idemp = :idemp";
+        if($idper != 1) { // Si no es SuperAdmin, agregar filtro de empresa o empresas vinculadas al usuario
+            if (!empty($idemp)) {
+                $sql .= " AND p.idemp = :idemp";
+            } elseif (!empty($idusu)) {
+                $sql .= " AND p.idemp IN (SELECT idemp FROM usuario_empresa WHERE idusu = :idusu)";
+            } else {
+                return [];
+            }
         }
 
         $modelo = new conexion();
@@ -139,7 +155,10 @@ public function getOne($idemp = null, $idper = null){
 
         $idprov = $this->getIdprov();
         $result->bindParam(':idprov', $idprov);
-        if($idper != 1) $result->bindParam(':idemp', $idemp);
+        if($idper != 1) {
+            if (!empty($idemp)) $result->bindParam(':idemp', $idemp);
+            elseif (!empty($idusu)) $result->bindParam(':idusu', $idusu);
+        }
 
         $result->execute();
         $res = $result->fetchAll(PDO::FETCH_ASSOC);
